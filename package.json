@@ -1,0 +1,25 @@
+{
+  "name": "boi-transpiler",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zhoujunpeng <zjp0432@163.com> (http://caiziguoguo.com)",
+  "license": "MIT",
+  "dependencies": {
+    "autoprefixer": "^7.1.5",
+    "copy-webpack-plugin": "^4.1.1",
+    "extract-text-webpack-plugin": "^3.0.1",
+    "favicons-webpack-plugin": "0.0.7",
+    "glob": "^7.1.2",
+    "html-webpack-plugin": "^2.30.1",
+    "html-webpack-plugin-replaceurl": "^1.1.0",
+    "lodash": "^4.17.4",
+    "postcss-sprites": "^4.2.1",
+    "shelljs": "^0.7.8",
+    "webpack": "^3.6.0",
+    "webpack-merge": "^4.1.0"
+  }
+}
