@@ -1,33 +1,37 @@
 const _ = require('lodash');
 const Path = require('path');
+const Shell = require('shelljs');
 const WebpackMerge = require('webpack-merge');
-const TranspileEntry = require('./transpile/entry.js');
-const TranspileOutput = require('./transpile/output.js');
-const TranspileModuleAndPlugin = require('./transpile/moduleAndPlugins.js');
+const TranspileEntry = require('./lib/entry.js');
+const TranspileOutput = require('./lib/output.js');
+const TranspileModuleAndPlugin = require('./lib/moduleAndPlugins.js');
+const TranspileBoiPlugins = require('./lib/boiPlugins.js');
 
 /**
- * @module 将boi配置解析为webpack配置
- * @param {Object} options boi配置
- * @param {Boolean} isDevelopment 是否为开发环境
- * @return {Object}
+ * @module boi/transpiler
+ * @param {Object} options boi configuration
+ * @param {Boolean} isDevelopment indicate whether is development environment
+ * @return {Object} webpack configuration and dependencies
  */
 module.exports = function(options,isDevelopment){
   const ModuleAndPlugins = TranspileModuleAndPlugin(options,isDevelopment);
   const EntryAndPlugins = TranspileEntry(options,isDevelopment);
   const Output = TranspileOutput(options,isDevelopment);
+  const WebpackConfOfBoiPlugins = TranspileBoiPlugins(options.plugins);
 
-  // npm global模块的路径
-  // 默认情况下，使用nvm管理node的环境下，global模块不能被resolve解析，@seehttps://github.com/creationix/nvm/pull/97
-  /* eslint-disable */
-  const NpmRootPath = _.trim(exec('npm root -g', {
-    silent: true
-  }).stdout);
-  /* eslint-enable */
+  /**
+   * global node_modules path,
+   * By default global modules can not be resolved on nvm environment
+   * @constant 
+   * @see https://github.com/creationix/nvm/pull/97
+   */
+  const NpmRootPath = _.trim(Shell.exec('npm root -g', { silent: true }).stdout);
 
   // 全局安装boi的node_modules目录
   const BoiModulesPath = Path.posix.join(NpmRootPath, 'boi/node_modules');
 
-  return WebpackMerge.smart({
+  return {
+    webpackConf: WebpackMerge.smart({
       entry: EntryAndPlugins.entry,
       output: Output,
       profile: true,
@@ -35,7 +39,7 @@ module.exports = function(options,isDevelopment){
       resolveLoader: {
         modules: [
           // 构建工具自身的模块目录
-          Path.posix.join(__dirname, '../../../node_modules'),
+          Path.posix.join(__dirname, './node_modules'),
           // 项目自身的模块目录
           Path.posix.join(process.cwd(), 'node_modules'),
           NpmRootPath,
@@ -44,11 +48,14 @@ module.exports = function(options,isDevelopment){
       },
       resolve: {
         modules: [
-          Path.posix.join(__dirname, '../../../node_modules'),
+          Path.posix.join(__dirname, './node_modules'),
           Path.posix.join(process.cwd(), 'node_modules'),
           NpmRootPath,
           BoiModulesPath
         ],
+        // disable symlinks
+        symlinks: false,
+        // '@' indicate the root path of source files
         alias: {
           '@': Path.posix.join(process.cwd(),options.compile.basic.source)
         }
@@ -64,5 +71,7 @@ module.exports = function(options,isDevelopment){
         // 所有类型文件最大不超过200kb
         maxAssetSize: 200000
       },options.compile.basic.limit)
-    },ModuleAndPlugins.webpackConf,options.pluginConfig||{})
+    },ModuleAndPlugins.webpackConf,[...WebpackConfOfBoiPlugins],options.pluginConfig||{}),
+    dependencies: ModuleAndPlugins.dependencies
+  }
 } 
