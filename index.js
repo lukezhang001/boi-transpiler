@@ -18,7 +18,6 @@ module.exports = function(options,isDevelopment){
   const EntryAndPlugins = TranspileEntry(options,isDevelopment);
   const Output = TranspileOutput(options,isDevelopment);
   const WebpackConfOfBoiPlugins = TranspileBoiPlugins(options.plugins);
-
   /**
    * global node_modules path,
    * By default global modules can not be resolved on nvm environment
@@ -71,7 +70,7 @@ module.exports = function(options,isDevelopment){
         // 所有类型文件最大不超过200kb
         maxAssetSize: 200000
       },options.compile.basic.limit)
-    },ModuleAndPlugins.webpackConf,[...WebpackConfOfBoiPlugins],options.pluginConfig||{}),
-    dependencies: ModuleAndPlugins.dependencies
+    },ModuleAndPlugins.webpackConf,...WebpackConfOfBoiPlugins.webpackConf),
+    dependencies: ModuleAndPlugins.dependencies.concat([...WebpackConfOfBoiPlugins.dependencies])
   }
 } 

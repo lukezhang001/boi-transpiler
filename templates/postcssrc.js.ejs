@@ -1,0 +1,8 @@
+const Path = require('path');
+module.exports = {
+  plugins: [
+  <% for(var i = 0,len = plugins.length;i < len;i++){ %>
+    require('<%- plugins[i].name %>')(<%- plugins[i].options %>)<%if(i<len-1){%>,<%}%>
+  <% }; %>
+  ]
+}
