@@ -1,16 +1,20 @@
 {
   "name": "boi-transpiler",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "transpile boi configuration to webpack configuration&dependencies",
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js&eslint lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:boijs/boi-transpiler.git"
   },
   "author": "zhoujunpeng <zjp0432@163.com> (http://caiziguoguo.com)",
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^7.1.5",
-    "boi-utils": "0.0.3",
+    "boi-utils": "^0.0.3",
     "copy-webpack-plugin": "^4.1.1",
     "css-loader": "^0.28.7",
     "ejs": "^2.5.7",
