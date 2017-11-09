@@ -1,6 +1,6 @@
 {
   "name": "boi-transpiler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "transpile boi configuration to webpack configuration&dependencies",
   "main": "index.js",
   "scripts": {
