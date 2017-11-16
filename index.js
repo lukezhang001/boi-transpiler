@@ -16,7 +16,7 @@ const TranspileModuleAndPlugin = require('./lib/moduleAndPlugins.js');
 module.exports = function (options, installPluginsAndDeps = false) {
 
   const IsDevelopment           = process.env.BOI_ENV === 'dev' ? true : false;
-  
+
   const EntryAndPlugins         = TranspileEntry(options, IsDevelopment);
   const Output                  = TranspileOutput(options, IsDevelopment);
   const WebpackConfOfBoiPlugins = TranspileBoiPlugins(options.plugins, installPluginsAndDeps);
