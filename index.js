@@ -2,6 +2,7 @@ const _                        = require('lodash');
 const Path                     = require('path');
 const Shell                    = require('shelljs');
 const WebpackMerge             = require('webpack-merge');
+const DllGenerator             = require('./lib/dll.js');
 const TranspileEntry           = require('./lib/entry.js');
 const TranspileOutput          = require('./lib/output.js');
 const TranspileBoiPlugins      = require('./lib/pluginsOfBoi.js');
@@ -14,13 +15,18 @@ const TranspileModuleAndPlugin = require('./lib/moduleAndPlugins.js');
  * @return {Object}  webpack configuration and dependencies
  */
 module.exports = function (options, installPluginsAndDeps = false) {
+  const IsDevelopment = process.env.BOI_ENV === 'dev' ? true : false;
 
-  const IsDevelopment           = process.env.BOI_ENV === 'dev' ? true : false;
-
-  const EntryAndPlugins         = TranspileEntry(options, IsDevelopment);
-  const Output                  = TranspileOutput(options, IsDevelopment);
+  const EntryAndPlugins = TranspileEntry(options, IsDevelopment);
+  const Output = TranspileOutput(options, IsDevelopment);
   const WebpackConfOfBoiPlugins = TranspileBoiPlugins(options.plugins, installPluginsAndDeps);
-  const ModuleAndPlugins        = TranspileModuleAndPlugin(options, IsDevelopment, installPluginsAndDeps);
+
+  const {
+    hasDll: HasDll,
+    config: WebpackConfOfDll
+  } = DllGenerator(options, IsDevelopment, installPluginsAndDeps, WebpackConfOfBoiPlugins.alias);
+
+  const ModuleAndPlugins = TranspileModuleAndPlugin(options, IsDevelopment, installPluginsAndDeps, HasDll);
 
   /**
    * By default global modules can not be resolved on nvm environment
@@ -35,6 +41,7 @@ module.exports = function (options, installPluginsAndDeps = false) {
   const BoiModulesPath = Path.posix.join(NpmRootPath, 'boi/node_modules');
 
   return {
+    webpackConfOfDll: WebpackConfOfDll,
     webpackConf: WebpackMerge.smart({
       entry: EntryAndPlugins.entry,
       output: Output,

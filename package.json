@@ -1,6 +1,6 @@
 {
   "name": "boi-transpiler",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "transpile boi configuration to webpack configuration&dependencies",
   "main": "index.js",
   "scripts": {
@@ -35,5 +35,8 @@
     "webpack": "^3.6.0",
     "webpack-hot-middleware": "^2.20.0",
     "webpack-merge": "^4.1.0"
+  },
+  "devDependencies": {
+    "html-webpack-include-assets-plugin": "^1.0.2"
   }
 }
