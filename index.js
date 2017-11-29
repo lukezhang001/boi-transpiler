@@ -38,8 +38,16 @@ module.exports = function (options, installPluginsAndDeps = false) {
   }).stdout);
 
   // node_modules path under global boi module
-  const BoiModulesPath = Path.posix.join(NpmRootPath, 'boi/node_modules');
-
+  // const BoiModulesPath = Path.posix.join(NpmRootPath, 'boi/node_modules');
+  let BoiModulesPath = null;
+  try {
+    require.resolve(Path.join(NpmRootPath, 'boi/node_modules'));
+    BoiModulesPath =Path.join(NpmRootPath, 'boi/node_modules');
+  }catch(e){
+  }
+  if(!BoiModulesPath){
+    BoiModulesPath = Path.join(__dirname,'../../node_modules');
+  }
   return {
     webpackConfOfDll: WebpackConfOfDll,
     webpackConf: WebpackMerge.smart({
